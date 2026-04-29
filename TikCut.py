@@ -25,9 +25,6 @@ FMO = ("Consolas", 10)
 FMB = ("Consolas", 10, "bold")
 F12B= ("Segoe UI", 12, "bold")
 
-
-# ── ffmpeg helpers ────────────────────────────────────────────────────────────
-
 def check_ffmpeg():
     try:
         subprocess.run(["ffmpeg", "-version"], capture_output=True, check=True)
@@ -66,9 +63,6 @@ def name_from_path(path):
         r'[._]?(1080p|720p|480p|2160p|HDRip|BluRay|WEB-DL|WEBRip|x264|x265|HEVC|AAC|H264).*',
         '', stem, flags=re.IGNORECASE)
     return stem.replace('.', ' ').replace('_', ' ').strip()
-
-
-# ── Widget helpers ────────────────────────────────────────────────────────────
 
 def mk_entry(parent, var, mono=False, ph="", w=None, fg_accent=False):
     kw = dict(width=w) if w else {}
