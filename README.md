@@ -169,6 +169,6 @@ MIT — do whatever you want with it.
 
 Made for people who post TV shows on TikTok and don't want to cut each episode by hand.
 
-**[⬇ Download TikCut.py.py](TikCut.py.py)**
+**[⬇ Download TikCut.py](TikCut.py)**
 
 </div>
