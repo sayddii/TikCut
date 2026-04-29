@@ -1,16 +1,8 @@
-#!/usr/bin/env python3
-"""
-TikCut v3.1 — GUI for splitting videos for TikTok
-Run: python tiktok_splitter_gui.py
-Requirements: ffmpeg (winget install ffmpeg / brew install ffmpeg)
-"""
-
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, scrolledtext
 import subprocess, threading, os, json, re, sys
 from pathlib import Path
 
-# ── Colors ───────────────────────────────────────────────────────────────────
 BG    = "#0a0a0f"
 SURF  = "#13131a"
 SURF2 = "#1c1c26"
@@ -149,7 +141,6 @@ def scrolled_canvas(parent):
     return inner, canvas
 
 
-# ══════════════════════════════════════════════════════════════════════════════
 class App(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -158,7 +149,6 @@ class App(tk.Tk):
         self.geometry("940x730")
         self.minsize(800, 640)
 
-        # ── Cut tab variables ─────────────────────────────────────────────────
         self.v_path       = tk.StringVar()
         self.v_name       = tk.StringVar()
         self.v_out        = tk.StringVar(value="tiktok_parts")
@@ -167,9 +157,8 @@ class App(tk.Tk):
         self.v_skip       = tk.BooleanVar(value=False)
         self.v_imode      = tk.StringVar(value="manual")
         self.v_isecs      = tk.IntVar(value=30)
-        self._name_locked = False   # True = user typed name manually
+        self._name_locked = False
 
-        # ── Split tab variables ───────────────────────────────────────────────
         self.sp_path     = tk.StringVar()
         self.sp_out      = tk.StringVar(value="series_parts")
         self.sp_do_split = tk.BooleanVar(value=True)
@@ -184,10 +173,8 @@ class App(tk.Tk):
 
         self._build()
 
-    # ─── UI build ────────────────────────────────────────────────────────────
 
     def _build(self):
-        # Header
         hdr = tk.Frame(self, bg=SURF, pady=0); hdr.pack(fill="x")
         logo = tk.Frame(hdr, bg=SURF); logo.pack(side="left", padx=20, pady=12)
         ico = tk.Frame(logo, bg=ACC, width=34, height=34)
@@ -199,7 +186,6 @@ class App(tk.Tk):
                  bg=SURF2, fg=ACC, padx=8, pady=3).pack(side="right", padx=20, pady=16)
         tk.Frame(self, bg=BRD, height=1).pack(fill="x")
 
-        # Notebook
         style = ttk.Style()
         style.theme_use("default")
         style.configure("TNotebook", background=BG, borderwidth=0, tabmargins=0)
@@ -220,19 +206,13 @@ class App(tk.Tk):
         self._build_cut(t1)
         self._build_split(t2)
 
-    # ══════════════════════════════════════════════════════════════════════════
-    #  CUT TAB
-    # ══════════════════════════════════════════════════════════════════════════
-
     def _build_cut(self, root):
         outer = tk.Frame(root, bg=BG); outer.pack(fill="both", expand=True)
 
-        # Left (scrollable)
         lw = tk.Frame(outer, bg=BG); lw.pack(side="left", fill="both", expand=True)
         left, _ = scrolled_canvas(lw)
         P = dict(padx=24)
 
-        # ── File ──
         sec_title(left, "Video File", **P)
 
         file_row = tk.Frame(left, bg=BG); file_row.pack(fill="x", **P)
@@ -242,7 +222,6 @@ class App(tk.Tk):
         self._file_info = tk.Label(left, text="", font=FX, fg=MUT, bg=BG)
         self._file_info.pack(anchor="w", **P, pady=(4,0))
 
-        # ── Settings ──
         sec_title(left, "Settings", **P)
 
         tk.Label(left, text="Series / Movie title", font=FT, fg=MUT, bg=BG).pack(anchor="w", **P, pady=(0,3))
@@ -272,7 +251,6 @@ class App(tk.Tk):
                            font=FT, bg=BG, fg=TXT, selectcolor=SURF2,
                            activebackground=BG, activeforeground=ACC).pack(side="left", padx=(0,14))
 
-        # Slider
         self._dur_lbl = tk.Label(left, text=f"Part length: {fmt_sec(self.v_dur.get())}",
                                   font=FT, fg=MUT, bg=BG)
         self._dur_lbl.pack(anchor="w", **P, pady=(14,4))
@@ -284,7 +262,6 @@ class App(tk.Tk):
         for t in ["1:00","1:30","2:00","2:30","3:00"]:
             tk.Label(tr, text=t, font=FX, fg=MUT, bg=BG).pack(side="left", expand=True)
 
-        # ── Skip intro ──
         sec_title(left, "Skip Intro", **P)
         tk.Checkbutton(left, text="Skip intro / opening at the beginning",
                        variable=self.v_skip, font=FT,
@@ -319,7 +296,6 @@ class App(tk.Tk):
         self._toggle_imode()
         tk.Frame(left, bg=BG, height=20).pack()
 
-        # ── Right panel ──
         tk.Frame(outer, bg=BRD, width=1).pack(side="left", fill="y")
         right = tk.Frame(outer, bg=SURF, width=310); right.pack(side="left", fill="y")
         right.pack_propagate(False)
@@ -362,12 +338,9 @@ class App(tk.Tk):
         for t, c in [("ok",OK),("err",DNG),("warn",WRN),("dim",MUT)]:
             self._log_box.tag_config(t, foreground=c)
 
-        # Traces — only after all widgets are created
         for v in [self.v_name, self.v_out, self.v_dur, self.v_skip, self.v_isecs, self.v_reencode]:
             v.trace_add("write", lambda *_: self._preview())
         self._preview()
-
-    # ── Cut tab logic ─────────────────────────────────────────────────────────
 
     def _pick_video(self):
         path = filedialog.askopenfilename(
@@ -567,10 +540,6 @@ class App(tk.Tk):
             try: os.rmdir(tmp)
             except: pass
 
-    # ══════════════════════════════════════════════════════════════════════════
-    #  SPLIT EPISODES TAB
-    # ══════════════════════════════════════════════════════════════════════════
-
     def _build_split(self, root):
         outer = tk.Frame(root, bg=BG); outer.pack(fill="both", expand=True)
 
@@ -578,7 +547,6 @@ class App(tk.Tk):
         left, _ = scrolled_canvas(lw)
         P = dict(padx=24)
 
-        # File
         sec_title(left, "Video File", **P)
         fr = tk.Frame(left, bg=BG); fr.pack(fill="x", **P)
         e = mk_entry(fr, self.sp_path, mono=True, ph="Path to video file...")
@@ -587,7 +555,6 @@ class App(tk.Tk):
         self._sp_info = tk.Label(left, text="", font=FX, fg=MUT, bg=BG)
         self._sp_info.pack(anchor="w", **P, pady=(4,0))
 
-        # Episode timestamps
         sec_title(left, "Episode Timestamps", **P)
         hint = tk.Frame(left, bg=SURF2, pady=10, padx=12); hint.pack(fill="x", **P, pady=(0,10))
         tk.Label(hint,
@@ -596,7 +563,6 @@ class App(tk.Tk):
                  "The last episode runs to the end of the file — no timestamp needed.",
             font=FX, fg=MUT, bg=SURF2, justify="left").pack(anchor="w")
 
-        # Table header
         hr = tk.Frame(left, bg=BG); hr.pack(fill="x", **P, pady=(0,4))
         for txt, wd in [("#",3),("Episode name",18),("Ends at",12),("",8)]:
             tk.Label(hr, text=txt, font=("Segoe UI",8,"bold"), fg=MUT, bg=BG,
@@ -610,7 +576,6 @@ class App(tk.Tk):
         mk_btn(br, "+ Add episode", self._sp_add_row, small=True).pack(side="left")
         mk_btn(br, "− Remove last", self._sp_remove_row, small=True).pack(side="left", padx=(8,0))
 
-        # Cut settings
         sec_title(left, "Cut into TikTok Parts", **P)
         opt = tk.Frame(left, bg=SURF2, pady=14, padx=14); opt.pack(fill="x", **P)
         tk.Checkbutton(opt, text="Cut each episode into TikTok parts",
@@ -656,7 +621,6 @@ class App(tk.Tk):
 
         self._sp_toggle_opts()
 
-        # Right panel
         tk.Frame(outer, bg=BRD, width=1).pack(side="left", fill="y")
         right = tk.Frame(outer, bg=SURF, width=310); right.pack(side="left", fill="y")
         right.pack_propagate(False)
@@ -687,8 +651,6 @@ class App(tk.Tk):
         self._sp_log_box.pack(fill="both", expand=True, **rp, pady=(0,20))
         for t, c in [("ok",OK),("err",DNG),("warn",WRN),("dim",MUT)]:
             self._sp_log_box.tag_config(t, foreground=c)
-
-    # ── Split tab logic ───────────────────────────────────────────────────────
 
     def _sp_add_row(self):
         idx = len(self.sp_rows)+1
