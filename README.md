@@ -82,12 +82,12 @@ Or just download `TikCut.py` directly — that's the whole app.
 ### 4 — Run
 
 ```bash
-python TikCut.py.py
+python TikCut.py
 ```
 
 macOS / Linux:
 ```bash
-python3 TikCut.py.py
+python3 TikCut.py
 ```
 
 No extra Python packages required.
