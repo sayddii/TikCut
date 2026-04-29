@@ -73,21 +73,21 @@ sudo apt install ffmpeg
 ### 3 — Get TikCut
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/tikcut.git
+git clone https://github.com/sayddii/TikCut.git
 cd tikcut
 ```
 
-Or just download `tiktok_splitter_gui.py` directly — that's the whole app.
+Or just download `TikCut.py` directly — that's the whole app.
 
 ### 4 — Run
 
 ```bash
-python tiktok_splitter_gui.py
+python TikCut.py.py
 ```
 
 macOS / Linux:
 ```bash
-python3 tiktok_splitter_gui.py
+python3 TikCut.py.py
 ```
 
 No extra Python packages required.
@@ -169,6 +169,6 @@ MIT — do whatever you want with it.
 
 Made for people who post TV shows on TikTok and don't want to cut each episode by hand.
 
-**[⬇ Download tiktok_splitter_gui.py](tiktok_splitter_gui.py)**
+**[⬇ Download TikCut.py.py](TikCut.py.py)**
 
 </div>
